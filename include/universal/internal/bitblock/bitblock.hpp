@@ -78,7 +78,7 @@ bool twosComplementLessThan(const bitblock<nbits>& lhs, const bitblock<nbits>& r
 template<size_t nbits>
 bool operator==(const bitblock<nbits>& lhs, const bitblock<nbits>& rhs) {
 	// compare remaining bits
-	if constexpr (nbits > 0) {
+	if (nbits > 0) {
 		for (size_t i = 0; i < nbits; ++i) if (lhs[i] != rhs[i]) return false;
 	}
 	// numbers are equal
@@ -113,7 +113,7 @@ bool operator<= (const bitblock<nbits>& lhs, const bitblock<nbits>& rhs) {
 template<size_t nbits>
 bool operator> (const bitblock<nbits>& lhs, const bitblock<nbits>& rhs) {
 	// compare remaining bits
-	if constexpr (nbits > 0) {
+	if (nbits > 0) {
 		for (int i = static_cast<int>(nbits) - 1; i >= 0; --i) {
 			if (lhs[size_t(i)] == 0 && rhs[size_t(i)] == 1)	return false;
 			if (lhs[size_t(i)] == 1 && rhs[size_t(i)] == 0) return true;

@@ -246,7 +246,7 @@ public:
 #ifdef LATER
 		bool ubit = true;
 		// construct the target areal
-		if constexpr (64 >= nbits - es - 1ull) {
+		if (64 >= nbits - es - 1ull) {
 			uint64_t bits = (s ? 1u : 0u);
 			bits <<= es;
 			bits |= exponent + EXP_BIAS;
@@ -254,7 +254,7 @@ public:
 			bits |= raw;
 			bits &= 0xFFFF'FFFE;
 			bits |= (ubit ? 0x1 : 0x0);
-			if constexpr (1 == nrBlocks) {
+			if (1 == nrBlocks) {
 				_block[MSU] = bt(bits);
 			}
 			else {
@@ -422,7 +422,7 @@ public:
 		bits |= raw;
 		bits &= 0xFFFF'FFFEu;
 		bits |= (ubit ? 0x1u : 0x0u);
-		if constexpr (1 == nrBlocks) {
+		if (1 == nrBlocks) {
 			_block[MSU] = bt(bits);
 		}
 		else {
@@ -623,10 +623,10 @@ public:
 	/// </summary>
 	/// <typeparam name="bt"></typeparam>
 	inline areal& operator++() {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return *this;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			// special cases are: 011...111 and 111...111
 			if ((_block[MSU] & MSU_MASK) == MSU_MASK) { // == all bits are set
 				_block[MSU] = 0;
@@ -696,17 +696,17 @@ public:
 	/// <param name="sign">boolean to make it + or - infinity, default is -inf</param>
 	/// <returns>void</returns> 
 	inline constexpr void setinf(bool sign = true) noexcept {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			_block[MSU] = sign ? bt(MSU_MASK ^ LSB_BIT_MASK) : bt(~SIGN_BIT_MASK & (MSU_MASK ^ LSB_BIT_MASK));
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			_block[0] = BLOCK_MASK ^ LSB_BIT_MASK;
 			_block[MSU] = sign ? MSU_MASK : bt(~SIGN_BIT_MASK & MSU_MASK);
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			_block[0] = BLOCK_MASK ^ LSB_BIT_MASK;
 			_block[1] = BLOCK_MASK;
 			_block[MSU] = sign ? MSU_MASK : bt(~SIGN_BIT_MASK & MSU_MASK);
@@ -725,16 +725,16 @@ public:
 	/// <param name="sign">boolean to make it + or - infinity, default is -inf</param>
 	/// <returns>void</returns> 
 	inline constexpr void setnan(int NaNType = NAN_TYPE_SIGNALLING) noexcept {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			// fall through
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			_block[0] = BLOCK_MASK;
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			_block[0] = BLOCK_MASK;
 			_block[1] = BLOCK_MASK;
 		}
@@ -795,10 +795,10 @@ public:
 	/// <param name="raw_bits">unsigned long long carrying bits that will be written verbatim to the areal</param>
 	/// <returns>reference to the areal</returns>
 	inline constexpr areal& setbits(uint64_t raw_bits) noexcept {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return *this;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			_block[0] = raw_bits & storageMask;
 		}
 		else {
@@ -864,7 +864,7 @@ public:
 	inline constexpr bool sign() const { return (_block[MSU] & SIGN_BIT_MASK) == SIGN_BIT_MASK; }
 	inline constexpr int scale() const {
 		int e{ 0 };
-		if constexpr (MSU_CAPTURES_E) {
+		if (MSU_CAPTURES_E) {
 			e = int((_block[MSU] & ~SIGN_BIT_MASK) >> EXP_SHIFT);
 			if (e == 0) {
 				// subnormal scale is determined by fraction
@@ -899,16 +899,16 @@ public:
 	inline constexpr bool isneg() const { return sign(); }
 	inline constexpr bool ispos() const { return !sign(); }
 	inline constexpr bool iszero() const {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return true;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			return (_block[MSU] & ~SIGN_BIT_MASK) == 0;
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			return (_block[0] == 0) && (_block[MSU] & ~SIGN_BIT_MASK) == 0;
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			return (_block[0] == 0) && _block[1] == 0 && (_block[MSU] & ~SIGN_BIT_MASK) == 0;
 		}
 		else {
@@ -936,19 +936,19 @@ public:
 	inline constexpr bool isinf(int InfType = INF_TYPE_EITHER) const {
 		bool isNegInf = false;
 		bool isPosInf = false;
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return false;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			isNegInf = (_block[MSU] & MSU_MASK) == (MSU_MASK ^ LSB_BIT_MASK);
 			isPosInf = (_block[MSU] & MSU_MASK) == ((MSU_MASK ^ SIGN_BIT_MASK) ^ LSB_BIT_MASK);
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			bool isInf = (_block[0] == (BLOCK_MASK ^ LSB_BIT_MASK));
 			isNegInf = isInf && ((_block[MSU] & MSU_MASK) == MSU_MASK);
 			isPosInf = isInf && (_block[MSU] & MSU_MASK) == (MSU_MASK ^ SIGN_BIT_MASK);
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			bool isInf = (_block[0] == (BLOCK_MASK ^ LSB_BIT_MASK)) && (_block[1] == BLOCK_MASK);
 			isNegInf = isInf && ((_block[MSU] & MSU_MASK) == MSU_MASK);
 			isPosInf = isInf && (_block[MSU] & MSU_MASK) == (MSU_MASK ^ SIGN_BIT_MASK);
@@ -978,15 +978,15 @@ public:
 	/// <returns>true if the right kind of NaN, false otherwise</returns>
 	inline constexpr bool isnan(int NaNType = NAN_TYPE_EITHER) const {
 		bool isNaN = true;
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return false;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			isNaN = (_block[0] == BLOCK_MASK);
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			isNaN = (_block[0] == BLOCK_MASK) && (_block[1] == BLOCK_MASK);
 		}
 		else {
@@ -1056,12 +1056,12 @@ public:
 	// extract the exponent field from the encoding
 	inline constexpr void exponent(blockbinary<es, bt>& e) const {
 		e.clear();
-		if constexpr (0 == nrBlocks) return;
-		else if constexpr (1 == nrBlocks) {
+		if (0 == nrBlocks) return;
+		else if (1 == nrBlocks) {
 			bt ebits = bt(_block[MSU] & ~SIGN_BIT_MASK);
 			e.setbits(uint64_t(ebits >> EXP_SHIFT));
 		}
-		else if constexpr (nrBlocks > 1) {
+		else if (nrBlocks > 1) {
 			if (MSU_CAPTURES_E) {
 				bt ebits = bt(_block[MSU] & ~SIGN_BIT_MASK);
 				e.setbits(uint64_t(ebits >> ((nbits - 1ull - es) % bitsInBlock)));
@@ -1074,12 +1074,12 @@ public:
 	// extract the fraction field from the encoding
 	inline constexpr void fraction(blockbinary<fbits, bt>& f) const {
 		f.clear();
-		if constexpr (0 == nrBlocks) return;
-		else if constexpr (1 == nrBlocks) {
+		if (0 == nrBlocks) return;
+		else if (1 == nrBlocks) {
 			bt fraction = bt(_block[MSU] & ~MSU_EXP_MASK);
 			f.setbits(bt(fraction >> bt(1ull)));
 		}
-		else if constexpr (nrBlocks > 1) {
+		else if (nrBlocks > 1) {
 			for (size_t i = 0; i < fbits; ++i) { f.setbit(i, at(nbits - 1ull - es - fbits + i)); }
 		}
 	}
@@ -1157,7 +1157,7 @@ protected:
 	/// <returns></returns>
 	template<size_t srcbits, typename StorageType>
 	constexpr uint64_t round(StorageType raw, int& exponent) noexcept {
-		if constexpr (fhbits < srcbits) {
+		if (fhbits < srcbits) {
 			// round to even: lsb guard round sticky
 		   // collect guard, round, and sticky bits
 		   // this same logic will work for the case where
@@ -1168,7 +1168,7 @@ protected:
 			bool guard = (mask & raw);
 			mask >>= 1;
 			bool round = (mask & raw);
-			if constexpr (shift > 1u) { // protect against a negative shift
+			if (shift > 1u) { // protect against a negative shift
 				StorageType allones(StorageType(~0));
 				mask = StorageType(allones << (shift - 2));
 				mask = ~mask;

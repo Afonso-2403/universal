@@ -39,7 +39,7 @@ void subnormals() {
 	cfloat<nbits, es, bt> a{ 0 };
 	std::cout << type_tag(a) << '\n';
 	++a;
-	if constexpr (nbits < 65) {
+	if (nbits < 65) {
 		for (size_t i = 0; i < fbits; ++i) {
 			std::cout << to_binary(a, true) << " : " << color_print(a) << " : " << a << '\n';
 			uint64_t fraction = a.fraction_ull();

@@ -338,7 +338,7 @@ namespace sw::universal {
 					}
 				}
 				else if (i == HALF - 4) { // project to inf or saturate to maxpos
-					if constexpr (isSaturating) {
+					if (isSaturating) {
 						golden.maxpos();
 					}
 					else {
@@ -360,7 +360,7 @@ namespace sw::universal {
 					nrOfFailedTests += Compare(testValue, nut, golden, bReportIndividualTestCases);
 				}
 				else if (i == NR_TEST_CASES - 4) { // project to -inf or saturation to maxneg
-					if constexpr (isSaturating) {
+					if (isSaturating) {
 						golden.maxneg();
 					}
 					else {
@@ -707,7 +707,7 @@ namespace sw::universal {
 				if (!nut.inrange(ref)) {
 					// the result of the addition is outside of the range
 					// of the NUT (number system under test)
-					if constexpr (isSaturating) {
+					if (isSaturating) {
 						if (ref > 0) cref.maxpos(); else cref.maxneg();
 					}
 					else {
@@ -729,7 +729,7 @@ namespace sw::universal {
 				}
 				if (nrOfFailedTests > 9) return nrOfFailedTests;
 			}
-			if constexpr (NR_VALUES > 256 * 256) {
+			if (NR_VALUES > 256 * 256) {
 				if (i % (NR_VALUES / 25) == 0) std::cout << '.';
 			}
 		}

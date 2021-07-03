@@ -221,67 +221,67 @@ int TestSingleBlockRepresentations(const std::string& tag, const std::string& op
 
 	std::string testcase;
 
-	if constexpr (es < 2) {
+	if (es < 2) {
 		std::stringstream ss;
 		ss << "areal<4, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling< 4, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 3) {
+	if (es < 3) {
 		std::stringstream ss;
 		ss << "areal<5, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling< 5, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 4) {
+	if (es < 4) {
 		std::stringstream ss;
 		ss << "areal<6, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling< 6, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 5) {
+	if (es < 5) {
 		std::stringstream ss;
 		ss << "areal<7, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling< 7, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 6) {
+	if (es < 6) {
 		std::stringstream ss;
 		ss << "areal<8, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling< 8, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 7) {
+	if (es < 7) {
 		std::stringstream ss;
 		ss << "areal<9, " << es << ", uint16_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling< 9, es, uint16_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 8) {
+	if (es < 8) {
 		std::stringstream ss;
 		ss << "areal<10, " << es << ", uint16_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling<10, es, uint16_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 10) {
+	if (es < 10) {
 		std::stringstream ss;
 		ss << "areal<12, " << es << ", uint16_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling<12, es, uint16_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 12) {
+	if (es < 12) {
 		std::stringstream ss;
 		ss << "areal<14, " << es << ", uint16_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling<14, es, uint16_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 14) {
+	if (es < 14) {
 		std::stringstream ss;
 		ss << "areal<16, " << es << ", uint16_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling<16, es, uint16_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 18) {
+	if (es < 18) {
 		std::stringstream ss;
 		ss << "areal<20, " << es << ", uint32_t> ";
 		testcase = ss.str();
@@ -301,37 +301,37 @@ int TestDoubleBlockRepresentations(const std::string& tag, const std::string& op
 	std::string testcase;
 
 
-	if constexpr (es < 7) {
+	if (es < 7) {
 		std::stringstream ss;
 		ss << "areal<9, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling< 9, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 8) {
+	if (es < 8) {
 		std::stringstream ss;
 		ss << "areal<10, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling<10, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 10) {
+	if (es < 10) {
 		std::stringstream ss;
 		ss << "areal<12, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling<12, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 12) {
+	if (es < 12) {
 		std::stringstream ss;
 		ss << "areal<14, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling<14, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 14) {
+	if (es < 14) {
 		std::stringstream ss;
 		ss << "areal<16, " << es << ", uint8_t> ";
 		testcase = ss.str();
 		nrOfFailedTestCases += ReportTestResult(VerifyReverseSampling<16, es, uint8_t, NativeFloatingPointType>(tag, bReportIndividualTestCases, bVerbose), testcase, op);
 	}
-	if constexpr (es < 18) {
+	if (es < 18) {
 		std::stringstream ss;
 		ss << "areal<20, " << es << ", uint16_t> ";
 		testcase = ss.str();
@@ -350,7 +350,7 @@ int TestTripleBlockRepresentations(const std::string& tag, const std::string& op
 
 	std::string testcase;
 
-	if constexpr (es < 18) {
+	if (es < 18) {
 		std::stringstream ss;
 		ss << "areal<20, " << es << ", uint8_t> ";
 		testcase = ss.str();

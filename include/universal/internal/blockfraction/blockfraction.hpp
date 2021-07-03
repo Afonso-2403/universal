@@ -86,19 +86,19 @@ public:
 	// constructors
 	constexpr blockfraction() noexcept : _block{ 0 } {}
 	constexpr blockfraction(uint64_t raw) noexcept : _block{ 0 } {
-		if constexpr (1 == nrBlocks) {
+		if (1 == nrBlocks) {
 			_block[0] = static_cast<bt>(storageMask & raw);;
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			_block[0] = static_cast<bt>(storageMask & raw);
 			_block[1] = static_cast<bt>(storageMask & (raw >> bitsInBlock));
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			_block[0] = static_cast<bt>(storageMask & raw);
 			_block[1] = static_cast<bt>(storageMask & (raw >> bitsInBlock));
 			_block[2] = static_cast<bt>(storageMask & (raw >> 2*bitsInBlock));
 		}
-		else if constexpr (4 == nrBlocks) {
+		else if (4 == nrBlocks) {
 			_block[0] = static_cast<bt>(storageMask & raw);
 			_block[1] = static_cast<bt>(storageMask & (raw >> bitsInBlock));
 			_block[2] = static_cast<bt>(storageMask & (raw >> 2 * bitsInBlock));
@@ -137,7 +137,7 @@ public:
 	constexpr blockfraction(long long initial_value) noexcept : _block{ 0 } { *this = initial_value; }
 
 	constexpr blockfraction& operator=(long long rhs) noexcept {
-		if constexpr (1 < nrBlocks) {
+		if (1 < nrBlocks) {
 			for (unsigned i = 0; i < nrBlocks; ++i) {
 				_block[i] = rhs & storageMask;
 				rhs >>= bitsInBlock;
@@ -145,7 +145,7 @@ public:
 			// enforce precondition for fast comparison by properly nulling bits that are outside of nbits
 			_block[MSU] &= MSU_MASK;
 		} 
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			_block[0] = rhs & storageMask;
 			// enforce precondition for fast comparison by properly nulling bits that are outside of nbits
 			_block[MSU] &= MSU_MASK;
@@ -242,7 +242,7 @@ public:
 			bitsToShift -= static_cast<int>(blockShift * bitsInBlock);
 			if (bitsToShift == 0) return *this;
 		}
-		if constexpr (MSU > 0) {
+		if (MSU > 0) {
 			// construct the mask for the upper bits in the block that need to move to the higher word
 			bt mask = 0xFFFFFFFFFFFFFFFF << (bitsInBlock - bitsToShift);
 			for (size_t i = MSU; i > 0; --i) {
@@ -286,7 +286,7 @@ public:
 				return *this;
 			}
 		}
-		if constexpr (MSU > 0) {
+		if (MSU > 0) {
 			bt mask = ALL_ONES;
 			mask >>= (bitsInBlock - bitsToShift); // this is a mask for the lower bits in the block that need to move to the lower word
 			for (size_t i = 0; i < MSU; ++i) {  // TODO: can this be improved? we should not have to work on the upper blocks in case we block shifted
@@ -312,19 +312,19 @@ public:
 	// modifiers
 	 // clear a block binary number
 	inline constexpr void clear() noexcept {
-		if constexpr (1 == nrBlocks) {
+		if (1 == nrBlocks) {
 			_block[0] = 0;
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			_block[0] = 0;
 			_block[1] = 0;
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			_block[0] = 0;
 			_block[1] = 0;
 			_block[2] = 0;
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			_block[0] = 0;
 			_block[1] = 0;
 			_block[2] = 0;
@@ -352,10 +352,10 @@ public:
 		// when b is out of bounds, fail silently as no-op
 	}
 	inline constexpr void setbits(uint64_t value) noexcept {
-		if constexpr (1 == nrBlocks) {
+		if (1 == nrBlocks) {
 			_block[0] = value & storageMask;
 		}
-		else if constexpr (1 < nrBlocks) {
+		else if (1 < nrBlocks) {
 			for (size_t i = 0; i < nrBlocks; ++i) {
 				_block[i] = value & storageMask;
 				value >>= bitsInBlock;
@@ -413,17 +413,17 @@ public:
 	}
 	inline constexpr uint64_t fraction_ull() const noexcept {
 		uint64_t raw{ 0 };
-		if constexpr (1 == nrBlocks) {
+		if (1 == nrBlocks) {
 			raw = _block[MSU];
 			raw &= MSU_MASK;
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			raw = _block[MSU];
 			raw &= MSU_MASK;
 			raw <<= bitsInBlock;
 			raw |= _block[0];
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			raw = _block[MSU];
 			raw &= MSU_MASK;
 			raw <<= bitsInBlock;
@@ -431,7 +431,7 @@ public:
 			raw <<= bitsInBlock;
 			raw |= _block[0];
 		}
-		else if constexpr (4 == nrBlocks) {
+		else if (4 == nrBlocks) {
 			raw = _block[MSU];
 			raw &= MSU_MASK;
 			raw <<= bitsInBlock;
@@ -465,7 +465,7 @@ public:
 		for (size_t i = 0; i < minNrBlocks; ++i) {
 			_block[i] = rhs.block(i);
 		}
-		if constexpr (nbits > srcbits) { // check if we need to sign extend
+		if (nbits > srcbits) { // check if we need to sign extend
 			if (rhs.sign()) {
 				for (size_t i = srcbits; i < nbits; ++i) { // TODO: replace bit-oriented sequence with block
 					setbit(i);
@@ -522,7 +522,7 @@ public:
 //		in the default pattern of #oh.ffff, the 'o' bit at(nbits - 2) is an overflow bit
 
 		// enumerate from the smallest bit position and add and increment value
-		if constexpr (nbits < 21) { // check if we can represent this value with a native normal float with 23 fraction bits => nbits <= (23 - 3)
+		if (nbits < 21) { // check if we can represent this value with a native normal float with 23 fraction bits => nbits <= (23 - 3)
 			constexpr size_t radix = nbits - 3;
 			float v = std::pow(2.0f, -float(radix));   // start from the small samples
 			for (size_t fractionBit = 0; fractionBit < radix; ++fractionBit) {
@@ -546,7 +546,7 @@ public:
 		if (tmp.test(nbits - 3)) d += 1.0;
 		//		in the default config of #oh.ffff, the 'o' bit at(nbits - 2) is an overflow bit
 
-		if constexpr (nbits < 50) { // check if we can represent this value with a native normal double with 52 fraction bits => nbits <= (52 - 3)
+		if (nbits < 50) { // check if we can represent this value with a native normal double with 52 fraction bits => nbits <= (52 - 3)
 			constexpr size_t radix = nbits - 3;
 			double v = std::pow(2.0, -double(radix));
 			for (size_t fractionBit = 0; fractionBit < radix; ++fractionBit) {

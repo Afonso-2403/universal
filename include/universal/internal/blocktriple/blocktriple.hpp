@@ -218,7 +218,7 @@ public:
 
 		_significant.add(lhs._significant, rhs._significant);
 
-		if constexpr (_trace_btriple_add) {
+		if (_trace_btriple_add) {
 			std::cout << "blockfraction unrounded add\n";
 			std::cout << typeid(lhs._significant).name() << '\n';
 			std::cout << "lhs significant : " << to_binary(lhs) << " : " << lhs << '\n';
@@ -253,7 +253,7 @@ public:
 				_scale -= leftShift;
 			}
 		}
-		if constexpr (_trace_btriple_add) {
+		if (_trace_btriple_add) {
 			std::cout << "blocktriple normalized add\n";
 			std::cout << typeid(lhs).name() << '\n';
 			std::cout << "lhs : " << to_binary(lhs) << " : " << lhs << '\n';
@@ -289,7 +289,7 @@ private:
 /// <returns></returns>
 	template<size_t srcbits, typename StorageType>
 	constexpr StorageType round(StorageType raw) noexcept {
-		if constexpr (nbits < srcbits) {
+		if (nbits < srcbits) {
 			// round to even: lsb guard round sticky
 			// collect guard, round, and sticky bits
 			// this same logic will work for the case where
@@ -310,7 +310,7 @@ private:
 			mask >>= 1;
 //			std::cout << "round : " << to_binary(mask, sizeof(StorageType) * 8, true) << '\n';
 			bool round = (mask & raw);
-			if constexpr (shift > 1 && shift < upper) { // protect against a negative shift
+			if (shift > 1 && shift < upper) { // protect against a negative shift
 				StorageType allones(StorageType(~0));
 				mask = StorageType(allones << (shift - 1));
 				mask = ~mask;
@@ -343,7 +343,7 @@ private:
 		}
 		else {
 			constexpr size_t shift = nbits - srcbits;
-			if constexpr (shift < sizeof(StorageType)) {
+			if (shift < sizeof(StorageType)) {
 				raw <<= shift;
 			}
 			else {

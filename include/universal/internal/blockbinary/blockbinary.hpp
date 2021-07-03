@@ -129,7 +129,7 @@ public:
 	constexpr blockbinary(long long initial_value) noexcept : _block{ 0 } { *this = initial_value; }
 
 	constexpr blockbinary& operator=(long long rhs) noexcept {
-		if constexpr (1 < nrBlocks) {
+		if (1 < nrBlocks) {
 			for (unsigned i = 0; i < nrBlocks; ++i) {
 				_block[i] = rhs & storageMask;
 				rhs >>= bitsInBlock;
@@ -137,7 +137,7 @@ public:
 			// enforce precondition for fast comparison by properly nulling bits that are outside of nbits
 			_block[MSU] &= MSU_MASK;
 		} 
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			_block[0] = rhs & storageMask;
 			// enforce precondition for fast comparison by properly nulling bits that are outside of nbits
 			_block[MSU] &= MSU_MASK;
@@ -257,7 +257,7 @@ public:
 			bitsToShift -= static_cast<int>(blockShift * bitsInBlock);
 			if (bitsToShift == 0) return *this;
 		}
-		if constexpr (MSU > 0) {
+		if (MSU > 0) {
 			// construct the mask for the upper bits in the block that need to move to the higher word
 			bt mask = 0xFFFFFFFFFFFFFFFF << (bitsInBlock - bitsToShift);
 			for (size_t i = MSU; i > 0; --i) {
@@ -309,7 +309,7 @@ public:
 				return *this;
 			}
 		}
-		if constexpr (MSU > 0) {
+		if (MSU > 0) {
 			bt mask = ALL_ONES;
 			mask >>= (bitsInBlock - bitsToShift); // this is a mask for the lower bits in the block that need to move to the lower word
 			for (size_t i = 0; i < MSU; ++i) {  // TODO: can this be improved? we should not have to work on the upper blocks in case we block shifted
@@ -362,10 +362,10 @@ public:
 		throw "blockbinary<nbits, bt>.setbit(index): bit index out of bounds";
 	}
 	inline constexpr void setbits(uint64_t value) noexcept {
-		if constexpr (1 == nrBlocks) {
+		if (1 == nrBlocks) {
 			_block[0] = value & storageMask;
 		}
-		else if constexpr (1 < nrBlocks) {
+		else if (1 < nrBlocks) {
 			for (size_t i = 0; i < nrBlocks; ++i) {
 				_block[i] = value & storageMask;
 				value >>= bitsInBlock;
@@ -434,7 +434,7 @@ public:
 		for (size_t i = 0; i < minNrBlocks; ++i) {
 			_block[i] = rhs.block(i);
 		}
-		if constexpr (nbits > srcbits) { // check if we need to sign extend
+		if (nbits > srcbits) { // check if we need to sign extend
 			if (rhs.sign()) {
 				for (size_t i = srcbits; i < nbits; ++i) { // TODO: replace bit-oriented sequence with block
 					setbit(i);

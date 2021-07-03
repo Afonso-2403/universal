@@ -143,7 +143,7 @@ inline /*constexpr*/ void convert(const blocktriple<srcbits, bt>& src,
 		}
 
 		// tgt.clear();
-		if constexpr (nbits < 65) {
+		if (nbits < 65) {
 			// we can use a uint64_t to construct the cfloat
 			uint64_t raw = (src.sign() ? 1ull : 0ull);
 			raw <<= es; // shift to make room for the exponent bits
@@ -339,7 +339,7 @@ public:
 	}
 
 	cfloat& operator+=(const cfloat& rhs) {
-		if constexpr (_trace_cfloat_add) std::cout << "---------------------- ADD -------------------" << std::endl;
+		if (_trace_cfloat_add) std::cout << "---------------------- ADD -------------------" << std::endl;
 		// special case handling of the inputs
 #if CFLOAT_THROW_ARITHMETIC_EXCEPTION
 		if (isnan(NAN_TYPE_SIGNALLING) || rhs.isnan(NAN_TYPE_SIGNALLING)) {
@@ -415,10 +415,10 @@ public:
 	/// </summary>
 	/// <typeparam name="bt"></typeparam>
 	inline cfloat& operator++() {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return *this;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			if (ispos()) {
 				if ((_block[MSU] & (MSU_MASK >> 1)) == (MSU_MASK >> 1)) { // pattern: 0.11.111 = nan
 					_block[MSU] |= SIGN_BIT_MASK; // pattern: 1.11.111 = snan 
@@ -496,10 +496,10 @@ public:
 		return tmp;
 	}
 	inline cfloat& operator--() {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return *this;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			if (ispos()) {
 				if (_block[MSU] == 0) { // pattern: 0.00.000 = 0
 					_block[MSU] |= SIGN_BIT_MASK; // pattern: 1.00.000 = -0 
@@ -598,22 +598,22 @@ public:
 	/// <param name="sign">boolean to make it + or - infinity, default is -inf</param>
 	/// <returns>void</returns> 
 	inline constexpr void setinf(bool sign = true) noexcept {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			_block[MSU] = sign ? bt(MSU_MASK ^ LSB_BIT_MASK) : bt(~SIGN_BIT_MASK & (MSU_MASK ^ LSB_BIT_MASK));
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			_block[0] = BLOCK_MASK ^ LSB_BIT_MASK;
 			_block[MSU] = sign ? MSU_MASK : bt(~SIGN_BIT_MASK & MSU_MASK);
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			_block[0] = BLOCK_MASK ^ LSB_BIT_MASK;
 			_block[1] = BLOCK_MASK;
 			_block[MSU] = sign ? MSU_MASK : bt(~SIGN_BIT_MASK & MSU_MASK);
 		}
-		else if constexpr (4 == nrBlocks) {
+		else if (4 == nrBlocks) {
 			_block[0] = BLOCK_MASK ^ LSB_BIT_MASK;
 			_block[1] = BLOCK_MASK;
 			_block[2] = BLOCK_MASK;
@@ -633,20 +633,20 @@ public:
 	/// <param name="sign">boolean to make it + or - infinity, default is -inf</param>
 	/// <returns>void</returns> 
 	inline constexpr void setnan(int NaNType = NAN_TYPE_SIGNALLING) noexcept {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			// fall through
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			_block[0] = BLOCK_MASK;
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			_block[0] = BLOCK_MASK;
 			_block[1] = BLOCK_MASK;
 		}
-		else if constexpr (4 == nrBlocks) {
+		else if (4 == nrBlocks) {
 			_block[0] = BLOCK_MASK;
 			_block[1] = BLOCK_MASK;
 			_block[2] = BLOCK_MASK;
@@ -668,7 +668,7 @@ public:
 	}
 	inline constexpr bool setexponent(int scale) {
 		if (scale < MIN_EXP_SUBNORMAL || scale > MAX_EXP) return false; // this scale cannot be represented
-		if constexpr (nbits < 65) {
+		if (nbits < 65) {
 			// we can use a uint64_t to construct the cfloat
 			//uint64_t raw{ 0 };
 			if (scale >= MIN_EXP_SUBNORMAL && scale < MIN_EXP_NORMAL) {
@@ -709,7 +709,7 @@ public:
 	}
 	inline constexpr void setfraction(uint64_t raw_bits) {
 		// unoptimized as it is not meant to be an end-user API, it is a test API
-		if constexpr (fbits < 65) {
+		if (fbits < 65) {
 			uint64_t mask{ 1ull };
 			for (size_t i = 0; i < fbits; ++i) {
 				setbit(i, (mask & raw_bits));
@@ -719,7 +719,7 @@ public:
 	}
 	// specific number system values of interest
 	inline constexpr cfloat& maxpos() noexcept {
-		if constexpr (hasSupernormals) {
+		if (hasSupernormals) {
 			// maximum positive value has this bit pattern: 0-1...1-111...111, that is, sign = 0, e = 11..11, f = 111...101
 			clear();
 			flip();
@@ -740,7 +740,7 @@ public:
 		return *this;
 	}
 	inline constexpr cfloat& minpos() noexcept {
-		if constexpr (hasSubnormals) {
+		if (hasSubnormals) {
 			// minimum positive value has this bit pattern: 0-000-00...01, that is, sign = 0, e = 000, f = 00001
 			clear();
 			setbit(0);
@@ -758,7 +758,7 @@ public:
 		return *this;
 	}
 	inline constexpr cfloat& minneg() noexcept {
-		if constexpr (hasSubnormals) {
+		if (hasSubnormals) {
 			// minimum negative value has this bit pattern: 1-000-00...01, that is, sign = 1, e = 00, f = 00001
 			clear();
 			setbit(nbits - 1ull);
@@ -773,7 +773,7 @@ public:
 		return *this;
 	}
 	inline constexpr cfloat& maxneg() noexcept {
-		if constexpr (hasSupernormals) {
+		if (hasSupernormals) {
 			// maximum negative value has this bit pattern: 1-1...1-111...101, that is, sign = 1, e = 1..1, f = 111...101
 			clear();
 			flip();
@@ -816,14 +816,14 @@ public:
 	/// <param name="raw_bits">unsigned long long carrying bits that will be written verbatim to the cfloat</param>
 	/// <returns>reference to the cfloat</returns>
 	inline constexpr cfloat& setbits(uint64_t raw_bits) noexcept {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return *this;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			_block[0] = raw_bits & storageMask;
 		}
-		else if constexpr (2 == nrBlocks) {
-			if constexpr (bitsInBlock < 64) {
+		else if (2 == nrBlocks) {
+			if (bitsInBlock < 64) {
 				_block[0] = raw_bits & storageMask;
 				raw_bits >>= bitsInBlock;
 				_block[1] = raw_bits & storageMask;
@@ -833,8 +833,8 @@ public:
 				_block[1] = 0;
 			}
 		}
-		else if constexpr (3 == nrBlocks) {
-			if constexpr (bitsInBlock < 64) {
+		else if (3 == nrBlocks) {
+			if (bitsInBlock < 64) {
 				_block[0] = raw_bits & storageMask;
 				raw_bits >>= bitsInBlock;
 				_block[1] = raw_bits & storageMask;
@@ -847,8 +847,8 @@ public:
 				_block[2] = 0;
 			}
 		}
-		else if constexpr (4 == nrBlocks) {
-			if constexpr (bitsInBlock < 64) {
+		else if (4 == nrBlocks) {
+			if (bitsInBlock < 64) {
 				_block[0] = raw_bits & storageMask;
 				raw_bits >>= bitsInBlock;
 				_block[1] = raw_bits & storageMask;
@@ -865,7 +865,7 @@ public:
 			}
 		}
 		else {
-			if constexpr (bitsInBlock < 64) {
+			if (bitsInBlock < 64) {
 				for (size_t i = 0; i < nrBlocks; ++i) {
 					_block[i] = raw_bits & storageMask;
 					raw_bits >>= bitsInBlock;
@@ -907,7 +907,7 @@ public:
 	inline constexpr bool sign() const noexcept { return (_block[MSU] & SIGN_BIT_MASK) == SIGN_BIT_MASK; }
 	inline constexpr int  scale() const noexcept {
 		int e{ 0 };
-		if constexpr (MSU_CAPTURES_E) {
+		if (MSU_CAPTURES_E) {
 			e = int((_block[MSU] & ~SIGN_BIT_MASK) >> EXP_SHIFT);
 			if (e == 0) {
 				// subnormal scale is determined by fraction
@@ -944,19 +944,19 @@ public:
 	inline constexpr bool isneg() const noexcept { return sign(); }
 	inline constexpr bool ispos() const noexcept { return !sign(); }
 	inline constexpr bool iszero() const noexcept {
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return true;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			return (_block[MSU] & ~SIGN_BIT_MASK) == 0;
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			return (_block[0] == 0) && (_block[MSU] & ~SIGN_BIT_MASK) == 0;
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			return (_block[0] == 0) && _block[1] == 0 && (_block[MSU] & ~SIGN_BIT_MASK) == 0;
 		}
-		else if constexpr (4 == nrBlocks) {
+		else if (4 == nrBlocks) {
 			return (_block[0] == 0) && _block[1] == 0 && _block[2] == 0 && (_block[MSU] & ~SIGN_BIT_MASK) == 0;
 		}
 		else {
@@ -984,24 +984,24 @@ public:
 	inline constexpr bool isinf(int InfType = INF_TYPE_EITHER) const noexcept {
 		bool isNegInf = false;
 		bool isPosInf = false;
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return false;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 			isNegInf = (_block[MSU] & MSU_MASK) == (MSU_MASK ^ LSB_BIT_MASK);
 			isPosInf = (_block[MSU] & MSU_MASK) == ((MSU_MASK ^ SIGN_BIT_MASK) ^ LSB_BIT_MASK);
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			bool isInf = (_block[0] == (BLOCK_MASK ^ LSB_BIT_MASK));
 			isNegInf = isInf && ((_block[MSU] & MSU_MASK) == MSU_MASK);
 			isPosInf = isInf && (_block[MSU] & MSU_MASK) == (MSU_MASK ^ SIGN_BIT_MASK);
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			bool isInf = (_block[0] == (BLOCK_MASK ^ LSB_BIT_MASK)) && (_block[1] == BLOCK_MASK);
 			isNegInf = isInf && ((_block[MSU] & MSU_MASK) == MSU_MASK);
 			isPosInf = isInf && (_block[MSU] & MSU_MASK) == (MSU_MASK ^ SIGN_BIT_MASK);
 		}
-		else if constexpr (4 == nrBlocks) {
+		else if (4 == nrBlocks) {
 			bool isInf = (_block[0] == (BLOCK_MASK ^ LSB_BIT_MASK)) && (_block[1] == BLOCK_MASK) && (_block[2] == BLOCK_MASK);
 			isNegInf = isInf && ((_block[MSU] & MSU_MASK) == MSU_MASK);
 			isPosInf = isInf && (_block[MSU] & MSU_MASK) == (MSU_MASK ^ SIGN_BIT_MASK);
@@ -1031,18 +1031,18 @@ public:
 	/// <returns>true if the right kind of NaN, false otherwise</returns>
 	inline constexpr bool isnan(int NaNType = NAN_TYPE_EITHER) const noexcept {
 		bool isNaN = true;
-		if constexpr (0 == nrBlocks) {
+		if (0 == nrBlocks) {
 			return false;
 		}
-		else if constexpr (1 == nrBlocks) {
+		else if (1 == nrBlocks) {
 		}
-		else if constexpr (2 == nrBlocks) {
+		else if (2 == nrBlocks) {
 			isNaN = (_block[0] == BLOCK_MASK);
 		}
-		else if constexpr (3 == nrBlocks) {
+		else if (3 == nrBlocks) {
 			isNaN = (_block[0] == BLOCK_MASK) && (_block[1] == BLOCK_MASK);
 		}
-		else if constexpr (4 == nrBlocks) {
+		else if (4 == nrBlocks) {
 			isNaN = (_block[0] == BLOCK_MASK) && (_block[1] == BLOCK_MASK) && (_block[2] == BLOCK_MASK);
 		}
 		else {
@@ -1155,12 +1155,12 @@ public:
 	// extract the exponent field from the encoding
 	inline constexpr void exponent(blockbinary<es, bt>& e) const {
 		e.clear();
-		if constexpr (0 == nrBlocks) return;
-		else if constexpr (1 == nrBlocks) {
+		if (0 == nrBlocks) return;
+		else if (1 == nrBlocks) {
 			bt ebits = bt(_block[MSU] & ~SIGN_BIT_MASK);
 			e.setbits(uint64_t(ebits >> EXP_SHIFT));
 		}
-		else if constexpr (nrBlocks > 1) {
+		else if (nrBlocks > 1) {
 			if (MSU_CAPTURES_E) {
 				bt ebits = bt(_block[MSU] & ~SIGN_BIT_MASK);
 				e.setbits(uint64_t(ebits >> ((nbits - 1ull - es) % bitsInBlock)));
@@ -1173,31 +1173,31 @@ public:
 	// extract the fraction field from the encoding
 	inline constexpr void fraction(blockbinary<fbits, bt>& f) const {
 		f.clear();
-		if constexpr (0 == nrBlocks) return;
-		else if constexpr (1 == nrBlocks) {
+		if (0 == nrBlocks) return;
+		else if (1 == nrBlocks) {
 			bt fraction = bt(_block[MSU] & ~MSU_EXP_MASK);
 			f.setbits(fraction);
 		}
-		else if constexpr (nrBlocks > 1) {
+		else if (nrBlocks > 1) {
 			for (size_t i = 0; i < fbits; ++i) { f.setbit(i, at(i)); } // TODO: TEST!
 		}
 	}
 	inline constexpr uint64_t fraction_ull() const {
 		uint64_t raw{ 0 };
-		if constexpr (nbits - es - 1ull < 65ull) { // no-op if precondition doesn't hold
-			if constexpr (1 == nrBlocks) {
+		if (nbits - es - 1ull < 65ull) { // no-op if precondition doesn't hold
+			if (1 == nrBlocks) {
 				uint64_t fbitMask = 0xFFFF'FFFF'FFFF'FFFF >> (64 - fbits);
 				raw = fbitMask & uint64_t(_block[0]);
 			}
-			else if constexpr (2 == nrBlocks) {
+			else if (2 == nrBlocks) {
 				uint64_t fbitMask = 0xFFFF'FFFF'FFFF'FFFF >> (64 - fbits);
 				raw = fbitMask & ((uint64_t(_block[1]) << bitsInBlock) | uint64_t(_block[0]));
 			}
-			else if constexpr (3 == nrBlocks) {
+			else if (3 == nrBlocks) {
 				uint64_t fbitMask = 0xFFFF'FFFF'FFFF'FFFF >> (64 - fbits);
 				raw = fbitMask & ((uint64_t(_block[2]) << (2*bitsInBlock)) | (uint64_t(_block[1]) << bitsInBlock) | uint64_t(_block[0]));
 			}
-			else if constexpr (4 == nrBlocks) {
+			else if (4 == nrBlocks) {
 				uint64_t fbitMask = 0xFFFF'FFFF'FFFF'FFFF >> (64 - fbits);
 				raw = fbitMask & ((uint64_t(_block[3]) << (3 * bitsInBlock)) | (uint64_t(_block[2]) << (2 * bitsInBlock)) | (uint64_t(_block[1]) << bitsInBlock) | uint64_t(_block[0]));
 			}
@@ -1217,8 +1217,8 @@ public:
 	inline constexpr size_t significant(blockbinary<fhbits, bt>& s, bool isNormal = true) const {
 		size_t shift = 0;
 		if (iszero()) return 0;
-		if constexpr (0 == nrBlocks) return 0;
-		else if constexpr (1 == nrBlocks) {
+		if (0 == nrBlocks) return 0;
+		else if (1 == nrBlocks) {
 			bt significant = bt(_block[MSU] & ~MSU_EXP_MASK & ~SIGN_BIT_MASK);
 			if (isNormal) {
 				significant |= (bt(0x1ul) << fbits);
@@ -1231,7 +1231,7 @@ public:
 			}
 			s.setbits(significant);
 		}
-		else if constexpr (nrBlocks > 1) {
+		else if (nrBlocks > 1) {
 			s.clear();
 			// TODO: design and implement a block-oriented algorithm, this sequential algorithm is super slow
 			if (isNormal) {
@@ -1363,26 +1363,26 @@ public:
 			// where 'f' is a fraction bit, and 'e' is an extension bit
 			// so that normalize can be used to generate blocktriples for add/sub/mul/div/sqrt
 			if (isnormal()) {
-				if constexpr (fbits < 64) { // max 63 bits of fraction to yield 64bit of raw significant bits
+				if (fbits < 64) { // max 63 bits of fraction to yield 64bit of raw significant bits
 					uint64_t raw = fraction_ull();
 					raw |= (1ull << fbits);
 					tgt.setbits(raw);
 				}
 				else {
 					// brute force copy of blocks
-					if constexpr (1 == fBlocks) {
+					if (1 == fBlocks) {
 						tgt.setblock(0, _block[0] & FSU_MASK);
 					}
-					else if constexpr (2 == fBlocks) {
+					else if (2 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1] & FSU_MASK);
 					}
-					else if constexpr (3 == fBlocks) {
+					else if (3 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1]);
 						tgt.setblock(2, _block[2] & FSU_MASK);
 					}
-					else if constexpr (4 == fBlocks) {
+					else if (4 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1]);
 						tgt.setblock(2, _block[2]);
@@ -1397,7 +1397,7 @@ public:
 				}
 			}
 			else { // it is a subnormal encoding in this target cfloat
-				if constexpr (fbits < 64) {
+				if (fbits < 64) {
 					uint64_t raw = fraction_ull();
 					int shift = MIN_EXP_NORMAL - scale;
 					raw <<= shift;
@@ -1406,19 +1406,19 @@ public:
 				}
 				else {
 					// brute force copy of blocks
-					if constexpr (1 == fBlocks) {
+					if (1 == fBlocks) {
 						tgt.setblock(0, _block[0] & FSU_MASK);
 					}
-					else if constexpr (2 == fBlocks) {
+					else if (2 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1] & FSU_MASK);
 					}
-					else if constexpr (3 == fBlocks) {
+					else if (3 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1]);
 						tgt.setblock(2, _block[2] & FSU_MASK);
 					}
-					else if constexpr (4 == fBlocks) {
+					else if (4 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1]);
 						tgt.setblock(2, _block[2]);
@@ -1457,7 +1457,7 @@ public:
 			// where 'f' is a fraction bit, and 'e' is an extension bit
 			// so that normalize can be used to generate blocktriples for add/sub/mul/div/sqrt
 			if (isnormal()) {
-				if constexpr (abits < 64) { // max 63 bits of fraction to yield 64bit of raw significant bits
+				if (abits < 64) { // max 63 bits of fraction to yield 64bit of raw significant bits
 					uint64_t raw = fraction_ull();
 					raw <<= (abits - fbits);
 					raw |= (1ull << abits); // add the hidden bit
@@ -1465,19 +1465,19 @@ public:
 				}
 				else {
 					// brute force copy of blocks
-					if constexpr (1 == fBlocks) {
+					if (1 == fBlocks) {
 						tgt.setblock(0, _block[0] & FSU_MASK);
 					}
-					else if constexpr (2 == fBlocks) {
+					else if (2 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1] & FSU_MASK);
 					}
-					else if constexpr (3 == fBlocks) {
+					else if (3 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1]);
 						tgt.setblock(2, _block[2] & FSU_MASK);
 					}
-					else if constexpr (4 == fBlocks) {
+					else if (4 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1]);
 						tgt.setblock(2, _block[2]);
@@ -1492,7 +1492,7 @@ public:
 				}
 			}
 			else { // it is a subnormal encoding in this target cfloat
-				if constexpr (abits < 64) {
+				if (abits < 64) {
 					uint64_t raw = fraction_ull();
 					raw <<= (abits - fbits);
 					int shift = MIN_EXP_NORMAL - scale;
@@ -1501,19 +1501,19 @@ public:
 				}
 				else {
 					// brute force copy of blocks
-					if constexpr (1 == fBlocks) {
+					if (1 == fBlocks) {
 						tgt.setblock(0, _block[0] & FSU_MASK);
 					}
-					else if constexpr (2 == fBlocks) {
+					else if (2 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1] & FSU_MASK);
 					}
-					else if constexpr (3 == fBlocks) {
+					else if (3 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1]);
 						tgt.setblock(2, _block[2] & FSU_MASK);
 					}
-					else if constexpr (4 == fBlocks) {
+					else if (4 == fBlocks) {
 						tgt.setblock(0, _block[0]);
 						tgt.setblock(1, _block[1]);
 						tgt.setblock(2, _block[2]);
@@ -1559,14 +1559,14 @@ protected:
 		raw = round<sizeInBits, uint64_t>(raw, exponent);
 #ifdef TODO
 		// construct the target cfloat
-		if constexpr (64 >= nbits - es - 1ull) {
+		if (64 >= nbits - es - 1ull) {
 			uint64_t bits = (s ? 1u : 0u);
 			bits <<= es;
 			bits |= exponent + EXP_BIAS;
 			bits <<= nbits - 1ull - es;
 			bits |= raw;
 			bits &= 0xFFFF'FFFF;
-			if constexpr (1 == nrBlocks) {
+			if (1 == nrBlocks) {
 				_block[MSU] = bt(bits);
 			}
 			else {
@@ -1585,7 +1585,7 @@ public:
 	CONSTEXPRESSION cfloat& convert_ieee754(Real rhs) noexcept {
 		// when we are a perfect match to single precision IEEE-754
 		// take the bits verbatim as a cfloat is a superset of IEEE-754 in all configurations
-		if constexpr (nbits == 32 && es == 8) {
+		if (nbits == 32 && es == 8) {
 			bool s{ false };
 			uint64_t rawExponent{ 0 };
 			uint64_t rawFraction{ 0 };
@@ -1599,7 +1599,7 @@ public:
 			return *this;
 		}
 		// when we are a perfect match to double precision IEEE-754
-		else if constexpr (nbits == 64 && es == 11) {
+		else if (nbits == 64 && es == 11) {
 			bool s{ false };
 			uint64_t rawExponent{ 0 };
 			uint64_t rawFraction{ 0 };
@@ -1678,7 +1678,7 @@ public:
 			// referencing them with a direct value comparison with the input. That would be
 			// the most performant implementation.
 			if (exponent > MAX_EXP) {
-				if constexpr (isSaturating) {
+				if (isSaturating) {
 					if (s) this->maxneg(); else this->maxpos(); // saturate to maxpos or maxneg
 				}
 				else {
@@ -1715,7 +1715,7 @@ public:
 			// input fbits >= cfloat fbits                 <-- need to round
 			// input fbits < cfloat fbits                  <-- no need to round
 
-			if constexpr (ieee754_parameter<Real>::fbits > fbits) {
+			if (ieee754_parameter<Real>::fbits > fbits) {
 				// this is the common case for cfloats that are smaller than single and double precision IEEE-754
 				constexpr int shiftRight = ieee754_parameter<Real>::fbits - fbits; // this is the bit shift to get the MSB of the src to the MSB of the tgt
 				uint32_t biasedExponent{ 0 };
@@ -1745,7 +1745,7 @@ public:
 						// MSB of source = 23 - 1, MSB of target = fbits - 1: shift = MSB of src - MSB of tgt => 23 - fbits
 						adjustment = 0;
 					}
-					if constexpr (shiftRight > 0) {		// if true we need to round
+					if (shiftRight > 0) {		// if true we need to round
 						// round-to-even logic
 						//  ... lsb | guard  round sticky   round
 						//       x     0       x     x       down
@@ -1761,7 +1761,7 @@ public:
 						bool guard = (mask & rawFraction);
 						mask >>= 1;
 						bool round = (mask & rawFraction);
-						if constexpr (shiftRight > 1) {
+						if (shiftRight > 1) {
 							mask = (0xFFFF'FFFF'FFFF'FFFFull << (shiftRight - 2));
 							mask = ~mask;
 						}
@@ -1839,7 +1839,7 @@ public:
 				uint64_t biasedExponent = static_cast<uint64_t>(static_cast<int64_t>(exponent) + EXP_BIAS);
 				constexpr int upshift = fbits - ieee754_parameter<Real>::fbits;
 				// output processing
-				if constexpr (nbits < 65) {
+				if (nbits < 65) {
 					// we can compose the bits in a native 64-bit unsigned integer
 					// common case: normal to normal
 					// nbits = 40, es = 8, fbits = 31: rhs = float fbits = 23; shift left by (31 - 23) = 8
@@ -1924,7 +1924,7 @@ public:
 			}
 		}
 		// post-processing results to implement saturation and projection after rounding logic
-		if constexpr (isSaturating) {
+		if (isSaturating) {
 			if (isinf(INF_TYPE_POSITIVE) || isnan(NAN_TYPE_QUIET)) {
 				maxpos();
 			}
@@ -1954,7 +1954,7 @@ protected:
 	/// <returns></returns>
 	template<size_t srcbits, typename StorageType>
 	constexpr uint64_t round(StorageType raw, int& exponent) noexcept {
-		if constexpr (fhbits < srcbits) {
+		if (fhbits < srcbits) {
 			// round to even: lsb guard round sticky
 		    // collect guard, round, and sticky bits
 		    // this same logic will work for the case where
@@ -1965,7 +1965,7 @@ protected:
 			bool guard = (mask & raw);
 			mask >>= 1;
 			bool round = (mask & raw);
-			if constexpr (shift > 1u) { // protect against a negative shift
+			if (shift > 1u) { // protect against a negative shift
 				StorageType allones(StorageType(~0));
 				mask = StorageType(allones << (shift - 2));
 				mask = ~mask;
@@ -1995,7 +1995,7 @@ protected:
 		}
 		else {
 			constexpr size_t shift = fhbits - srcbits;
-			if constexpr (shift < (sizeof(StorageType))) {
+			if (shift < (sizeof(StorageType))) {
 				raw <<= shift;
 			}
 			else {

@@ -1908,7 +1908,7 @@ std::string convert_to_decimal_string(const fixpnt<nbits, rbits, arithmetic, bt>
 	std::stringstream ss;
 	if (value.iszero()) {
 		ss << '0';
-		if constexpr (rbits > 0) {
+		if (rbits > 0) {
 			ss << '.';
 			for (size_t i = 0; i < rbits; ++i) {
 				ss << '0';
@@ -1939,7 +1939,7 @@ std::string convert_to_decimal_string(const fixpnt<nbits, rbits, arithmetic, bt>
 		ss << '0';
 	}
 
-	if constexpr (rbits > 0) {
+	if (rbits > 0) {
 		ss << ".";
 		// and secondly, the fraction part
 		support::decimal range, discretizationLevels, step;
@@ -2119,7 +2119,7 @@ inline std::string to_binary(const fixpnt<nbits, rbits, arithmetic, bt>& number,
 		if (bNibbleMarker && (i - rbits) > 0 && (i - rbits) % 4 == 0) ss << '\'';
 	}
 	ss << '.';
-	if constexpr (rbits > 0) {
+	if (rbits > 0) {
 		for (int i = int(rbits) - 1; i >= 0; --i) {
 			ss << (number.at(static_cast<size_t>(i)) ? '1' : '0');
 			if (bNibbleMarker && (rbits - i) % 4 == 0 && i != 0) ss << '\'';

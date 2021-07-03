@@ -169,7 +169,7 @@ inline int scale(const exponent<nbits, es>& e) { return e.scale(); }
 template<size_t nbits, size_t es>
 inline std::ostream& operator<<(std::ostream& ostr, const exponent<nbits, es>& e) {
 	size_t nrOfExponentBitsProcessed = 0;
-	if constexpr (es > 0) {
+	if (es > 0) {
 		for (int i = int(es) - 1; i >= 0; --i) {
 			if (e._NrOfBits > nrOfExponentBitsProcessed++) {
 				ostr << (e._Bits[size_t(i)] ? "1" : "0");
@@ -195,7 +195,7 @@ template<size_t nbits, size_t es>
 inline std::string to_string(const exponent<nbits, es>& e, bool dashExtent = true) {
 	std::stringstream ostr;
 	size_t nrOfExponentBitsProcessed = 0;
-	if constexpr (es > 0) {
+	if (es > 0) {
 		for (int i = int(es) - 1; i >= 0; --i) {
 			if (e.nrBits() > nrOfExponentBitsProcessed++) {
 				bitblock<es> bb = e.get();
